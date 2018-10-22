@@ -1,4 +1,3 @@
-import os
 import tensorflow as tf
 import numpy as np
 import DEN
@@ -31,41 +30,40 @@ testX = mnist.test.images
 
 task_permutation = []
 for task in range(10):
-	task_permutation.append(np.random.permutation(784))
+    task_permutation.append(np.random.permutation(784))
 
 trainXs, valXs, testXs = [], [], []
 for task in range(10):
-	trainXs.append(trainX[:, task_permutation[task]])
-	valXs.append(valX[:, task_permutation[task]])
-	testXs.append(testX[:, task_permutation[task]])
+    trainXs.append(trainX[:, task_permutation[task]])
+    valXs.append(valX[:, task_permutation[task]])
+    testXs.append(testX[:, task_permutation[task]])
 
 model = DEN.DEN(FLAGS)
 params = dict()
 avg_perf = []
 
 for t in range(FLAGS.n_classes):
-	data = (trainXs[t], mnist.train.labels, valXs[t], mnist.validation.labels, testXs[t], mnist.test.labels)
-	model.sess = tf.Session()
-	print("\n\n\tTASK %d TRAINING\n"%(t+1))
+    data = (trainXs[t], mnist.train.labels, valXs[t], mnist.validation.labels, testXs[t], mnist.test.labels)
+    model.sess = tf.Session()
+    print("\n\n\tTASK %d TRAINING\n" % (t + 1))
 
-	model.T = model.T+1
-	model.task_indices.append(t+1)
-	model.load_params(params, time = 1)
-	perf, sparsity, expansion = model.add_task(t+1, data)
+    model.T = model.T + 1
+    model.task_indices.append(t + 1)
+    model.load_params(params, time=1)
+    perf, sparsity, expansion = model.add_task(t + 1, data)
 
-	params = model.get_params()
-	model.destroy_graph()
-	model.sess.close()
+    params = model.get_params()
+    model.destroy_graph()
+    model.sess.close()
 
-	model.sess= tf.Session()
-	print('\n OVERALL EVALUATION')
-	model.load_params(params)
-	temp_perfs = []
-	for j in range(t+1):
-		temp_perf = model.predict_perform(j+1, testXs[j], mnist.test.labels)
-		temp_perfs.append(temp_perf)
-	avg_perf.append( sum(temp_perfs) / float(t+1) )
-	print("   [*] avg_perf: %.4f"%avg_perf[t])
-	model.destroy_graph()
-	model.sess.close()
-
+    model.sess = tf.Session()
+    print('\n OVERALL EVALUATION')
+    model.load_params(params)
+    temp_perfs = []
+    for j in range(t + 1):
+        temp_perf = model.predict_perform(j + 1, testXs[j], mnist.test.labels)
+        temp_perfs.append(temp_perf)
+    avg_perf.append(sum(temp_perfs) / float(t + 1))
+    print("   [*] avg_perf: %.4f" % avg_perf[t])
+    model.destroy_graph()
+    model.sess.close()
