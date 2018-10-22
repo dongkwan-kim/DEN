@@ -239,7 +239,7 @@ class DEN(object):
                 b = self.get_variable('layer%d' % i, 'biases', False)
                 w = w[:stamp[i - 1], :stamp[i]]
                 b = b[:stamp[i]]
-                print(' [*] task %d, shape : %s' % (i, w.get_shape().as_list()))
+                print(' [*] task %d, shape of layer %d : %s' % (task_id, i, w.get_shape().as_list()))
 
                 bottom = tf.nn.relu(tf.matmul(bottom, w) + b)
 
