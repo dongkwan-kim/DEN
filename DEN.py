@@ -63,7 +63,7 @@ class DEN(object):
                     self.params[w.name] = w
                 else:
                     pass
-            return;
+            return
 
         if time == 1:
             self.prev_W = dict()
@@ -74,8 +74,12 @@ class DEN(object):
             scope_name = scope_name.split(':')[0]
             scope = scope_name.split('/')[0]
             name = scope_name.split('/')[1]
-            if (scope == 'layer%d' % self.n_layers) and ('_%d' % self.T) not in name: trainable = False
-            if scope in self.param_trained: trainable = False
+
+            if (scope == 'layer%d' % self.n_layers) and ('_%d' % self.T) not in name:
+                trainable = False
+            if scope in self.param_trained:
+                trainable = False
+
             # current task is trainable
             w = tf.get_variable(scope_name, initializer=param, trainable=trainable)
             self.params[w.name] = w
@@ -262,7 +266,7 @@ class DEN(object):
         self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.y, labels=self.Y))
 
         if prediction:
-            return;
+            return
 
     def selective_learning(self, task_id, selected_params):
         bottom = self.X

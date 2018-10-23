@@ -5,7 +5,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 np.random.seed(1004)
 flags = tf.app.flags
-flags.DEFINE_integer("max_iter", 4300, "Epoch to train")
+flags.DEFINE_integer("max_iter", 200, "Epoch to train")
 flags.DEFINE_float("lr", 0.001, "Learing rate(init) for train")
 flags.DEFINE_integer("batch_size", 256, "The size of batch for 1 iteration")
 flags.DEFINE_string("checkpoint_dir", "checkpoints", "Directory path to save the checkpoints")
