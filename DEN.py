@@ -1,16 +1,20 @@
 import collections
 import random
 import re
+import os
+import pickle
 from collections import defaultdict
 
 import tensorflow as tf
 from numpy import linalg as LA
 
 from ops import *
+from utills import *
 
 
 class DEN(object):
     def __init__(self, config):
+        self.sess: tf.Session = None
         self.T = 0
         self.task_indices = []
         self.batch_size = config.batch_size
@@ -28,6 +32,9 @@ class DEN(object):
         self.regular_lambda = config.regular_lambda
         self.early_training = config.max_iter / 10.
         self.time_stamp = dict()
+        self.checkpoint_dir = config.checkpoint_dir
+        if not os.path.isdir(self.checkpoint_dir):
+            os.mkdir(self.checkpoint_dir)
 
         self.loss_thr = config.loss_thr
         self.spl_thr = config.spl_thr
@@ -39,6 +46,10 @@ class DEN(object):
             self.params[b.name] = b
 
         self.cur_W, self.prev_W = dict(), dict()
+
+    def task_inc(self):
+        self.T = self.T + 1
+        self.task_indices.append(self.T)
 
     def get_params(self):
         """ Access the parameters """
@@ -664,3 +675,46 @@ class DEN(object):
             nzero = float(np.count_nonzero(m_value))
             zeros += (size - nzero)
         return (zeros + 1) / (n_params + 1)
+
+    def save(self, task_id: int = None):
+
+        # Refer to https://github.com/tensorflow/tensorflow/issues/1325
+        raise NotImplementedError
+
+        task_id = task_id if task_id else self.T
+        model_path = os.path.join(self.checkpoint_dir, "{}_model.ckpt".format(task_id))
+        saver = tf.train.Saver()
+        saver.save(self.sess, model_path)
+        self._save_attributes(task_id)
+        tf.summary.FileWriter("logs/save", self.sess.graph)
+        print("{} saved".format(model_path))
+
+    def _save_attributes(self, task_id: int):
+        attr_path = os.path.join(self.checkpoint_dir, "{}_attr.pkl".format(task_id))
+        with open(attr_path, "wb") as f:
+            attr_to_save = {
+                "time_stamp": self.time_stamp,
+            }
+            pickle.dump(attr_to_save, f)
+
+    def restore(self, task_id: int = None) -> bool:
+        task_id = task_id if task_id else self.T
+        try:
+            model_path = os.path.join(self.checkpoint_dir, "{}_model.ckpt".format(task_id))
+            saver = tf.train.Saver()
+            self._restore_attributes(task_id)
+            saver.restore(self.sess, model_path)
+            print_ckpt_vars(model_path, "Ckpt vars")
+            print_all_vars("All vars after restore")
+            tf.summary.FileWriter("logs/restore", self.sess.graph)
+            print("{} restored".format(model_path))
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    def _restore_attributes(self, task_id: int):
+        attr_path = os.path.join(self.checkpoint_dir, "{}_attr.pkl".format(task_id))
+        with open(attr_path, "rb") as f:
+            for k, v in pickle.load(f).items():
+                setattr(self, k, v)

@@ -45,10 +45,9 @@ avg_perf = []
 for t in range(FLAGS.n_classes):
     data = (trainXs[t], mnist.train.labels, valXs[t], mnist.validation.labels, testXs[t], mnist.test.labels)
     model.sess = tf.Session()
-    print("\n\n\tTASK %d TRAINING\n" % (t + 1))
 
-    model.T = model.T + 1
-    model.task_indices.append(t + 1)
+    print("\n\n\tTASK %d TRAINING\n" % (t + 1))
+    model.task_inc()
     model.load_params(params, time=1)
     perf, sparsity, expansion = model.add_task(t + 1, data)
 
