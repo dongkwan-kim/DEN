@@ -1,14 +1,18 @@
 import tensorflow as tf
 import numpy as np
-import DEN
 from tensorflow.examples.tutorials.mnist import input_data
+
+try:
+    from DEN.DEN import DEN
+except ModuleNotFoundError:
+    from DEN import DEN
 
 np.random.seed(1004)
 flags = tf.app.flags
 flags.DEFINE_integer("max_iter", 200, "Epoch to train")
 flags.DEFINE_float("lr", 0.001, "Learing rate(init) for train")
 flags.DEFINE_integer("batch_size", 256, "The size of batch for 1 iteration")
-flags.DEFINE_string("checkpoint_dir", "checkpoints", "Directory path to save the checkpoints")
+flags.DEFINE_string("checkpoint_dir", "../checkpoints", "Directory path to save the checkpoints")
 flags.DEFINE_integer("dims0", 784, "Dimensions about input layer")
 flags.DEFINE_integer("dims1", 312, "Dimensions about 1st layer")
 flags.DEFINE_integer("dims2", 128, "Dimensions about 2nd layer")
@@ -23,7 +27,7 @@ flags.DEFINE_float('loss_thr', 0.01, "Threshold of dynamic expansion")
 flags.DEFINE_float('spl_thr', 0.05, "Threshold of split and duplication")
 FLAGS = flags.FLAGS
 
-mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
+mnist = input_data.read_data_sets('../MNIST_data', one_hot=True)
 trainX = mnist.train.images
 valX = mnist.validation.images
 testX = mnist.test.images
@@ -38,7 +42,7 @@ for task in range(10):
     valXs.append(valX[:, task_permutation[task]])
     testXs.append(testX[:, task_permutation[task]])
 
-model = DEN.DEN(FLAGS)
+model = DEN(FLAGS)
 params = dict()
 avg_perf = []
 

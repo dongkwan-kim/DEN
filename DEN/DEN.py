@@ -5,11 +5,14 @@ import os
 import pickle
 from collections import defaultdict
 
-import tensorflow as tf
 from numpy import linalg as LA
 
-from ops import *
-from utills import *
+try:
+    from DEN.ops import *
+    from DEN.utills import *
+except ModuleNotFoundError:
+    from ops import *
+    from utills import *
 
 
 class DEN(object):
