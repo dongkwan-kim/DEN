@@ -9,10 +9,10 @@ from numpy import linalg as LA
 
 try:
     from DEN.ops import *
-    from DEN.utills import *
+    from DEN.utils import *
 except ModuleNotFoundError:
     from ops import *
-    from utills import *
+    from utils import *
 
 
 class DEN(object):
