@@ -30,6 +30,7 @@ setup(
     install_requires=[
         "numpy",
         "tensorflow",
+        'termcolor',
     ],
     zip_safe=False,
     keywords='ICLR',
