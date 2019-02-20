@@ -257,7 +257,7 @@ class DEN(object):
                 b = self.get_variable('layer%d' % i, 'biases', False)
                 w = w[:stamp[i - 1], :stamp[i]]
                 b = b[:stamp[i]]
-                print(' [*] task %d, shape of layer %d : %s' % (task_id, i, w.get_shape().as_list()))
+                print(' [*] task %d, shape of layer %d : %s' % (task_id, i, self.get_shape(w, task_id, i)))
 
                 bottom = tf.nn.relu(tf.matmul(bottom, w) + b)
 
@@ -281,6 +281,9 @@ class DEN(object):
 
         if prediction:
             return
+
+    def get_shape(self, obj_w_shape, task_id, layer_id):
+        return obj_w_shape.get_shape().as_list()
 
     def selective_learning(self, task_id, selected_params):
         bottom = self.X
