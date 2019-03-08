@@ -37,7 +37,7 @@ class DEN(object):
         self.time_stamp = dict()
         self.checkpoint_dir = config.checkpoint_dir
         if not os.path.isdir(self.checkpoint_dir):
-            os.mkdir(self.checkpoint_dir)
+            os.makedirs(self.checkpoint_dir)
 
         self.loss_thr = config.loss_thr
         self.spl_thr = config.spl_thr
