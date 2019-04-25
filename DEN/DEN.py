@@ -8,8 +8,8 @@ from collections import defaultdict
 from numpy import linalg as LA
 
 try:
-    from DEN.ops import *
-    from DEN.utils import *
+    from .ops import *
+    from .utils import *
 except ModuleNotFoundError:
     from ops import *
     from utils import *

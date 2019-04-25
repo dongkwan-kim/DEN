@@ -3,7 +3,7 @@ import numpy as np
 from tensorflow.examples.tutorials.mnist import input_data
 
 try:
-    from DEN.DEN import DEN
+    from .DEN import DEN
 except ModuleNotFoundError:
     from DEN import DEN
 
